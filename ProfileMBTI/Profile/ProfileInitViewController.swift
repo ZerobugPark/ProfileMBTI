@@ -16,19 +16,29 @@ final class ProfileInitViewController: UIViewController {
     override func loadView() {
         view = profileView
         
-        
-        profileView.nameTextField.delegate = self
-        profileView.collectionView.delegate = self
-        profileView.collectionView.dataSource = self
-        profileView.collectionView.register(ProfileInitCollectionViewCell.self, forCellWithReuseIdentifier: ProfileInitCollectionViewCell.id)
-        
-        navigationItem.title = profileModel.navigationTitle
-        bind()
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        profileModel.inputViewDidLoad.value = ()
+        profileView.nameTextField.delegate = self
+        profileView.collectionView.delegate = self
+        profileView.collectionView.dataSource = self
+        profileView.collectionView.register(ProfileInitCollectionViewCell.self, forCellWithReuseIdentifier: ProfileInitCollectionViewCell.id)
+        profileView.imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileButtonTapped)))
+        
+        navigationItem.title = profileModel.navigationTitle
+        navigationItem.backButtonTitle = ""
+        bind()
+        
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        profileModel.inputReset.value = ()
+    }
+    
     
     private func bind() {
         profileModel.outputChangeStauts.lazyBind { [weak self] _ in
@@ -37,13 +47,14 @@ final class ProfileInitViewController: UIViewController {
 
         }
         profileModel.outputTextStatus.lazyBind { [weak self] (msg, stauts) in
-            
+            print("outputMbtiStatus")
             self?.profileView.infoLable.text = msg
             self?.profileView.infoLable.textColor = stauts ? ColorList.trueButton :  ColorList.labelFalse
             
         }
         
         profileModel.outputTextFieldStatus.lazyBind { [weak self] (msg, stauts) in
+            print("outputTextFieldStatus")
             self?.profileView.infoLable.text = msg
             self?.profileView.infoLable.textColor = stauts ? ColorList.trueButton :  ColorList.labelFalse
             
@@ -51,6 +62,24 @@ final class ProfileInitViewController: UIViewController {
             
             self?.profileView.okButton.isEnabled = stauts
         }
+        
+        profileModel.outputImageIndex.bind { [weak self] index in
+            print("outputImageIndex")
+            self?.profileView.imageView.image = ImageList.shared.profileImageList[index]
+        }
+    }
+    
+    @objc private func profileButtonTapped(_ sender: UIButton) {
+        
+        let vc = ProfileImageSettingViewController()
+        vc.settingModel.outputimageIndex.value = profileModel.outputImageIndex.value
+        vc.settingModel.changedImage =  { [weak self] num in
+            self?.profileModel.inputSelectedImage.value = num
+        }
+        
+        
+        navigationController?.pushViewController(vc, animated: true)
+
     }
     
 
