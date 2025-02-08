@@ -23,10 +23,13 @@ final class ProfileInitViewController: UIViewController {
         
         profileModel.inputViewDidLoad.value = ()
         profileView.nameTextField.delegate = self
+
         profileView.collectionView.delegate = self
         profileView.collectionView.dataSource = self
         profileView.collectionView.register(ProfileInitCollectionViewCell.self, forCellWithReuseIdentifier: ProfileInitCollectionViewCell.id)
+
         profileView.imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileButtonTapped)))
+        profileView.okButton.addTarget(self, action: #selector(okButtonTapped), for: .touchUpInside)
         
         navigationItem.title = profileModel.navigationTitle
         navigationItem.backButtonTitle = ""
@@ -69,6 +72,16 @@ final class ProfileInitViewController: UIViewController {
         }
     }
     
+    @objc private func okButtonTapped(_ sender: UIButton) {
+        
+        guard let windwScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windwScene.windows.first else { return }
+        
+        window.rootViewController = UINavigationController(rootViewController: ViewController())
+        window.makeKeyAndVisible()
+        
+    }
+    
+
     @objc private func profileButtonTapped(_ sender: UIButton) {
         
         let vc = ProfileImageSettingViewController()
@@ -81,8 +94,6 @@ final class ProfileInitViewController: UIViewController {
         navigationController?.pushViewController(vc, animated: true)
 
     }
-    
-
 
   
     
