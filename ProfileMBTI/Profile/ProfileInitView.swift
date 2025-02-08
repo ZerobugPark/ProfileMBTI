@@ -14,12 +14,15 @@ class ProfileInitView: BaseView {
     private let circleView = UIView()
     private let subImageView = CustomImageView()
     private let lineView = UIView()
+    private let mbtiLable = CustomLabel(boldStyle: true, fontSize: 14, color: ColorList.black)
     
     let imageView = CustomImageView(selected: true)
     let nameTextField = CustomTextField(placeholder: "사용하실 닉네임을 입력해주세요")
-    let infoLable = CustomLabel(boldStyle: false, fontSize: 12, color: ColorList.mainColor)
+    let infoLable = CustomLabel(boldStyle: false, fontSize: 12, color: ColorList.labelFalse)
     let okButton = CustomButton(title: "완료")
-    //let randomImageIndex = Int.random(in: 0..<ImageList.shared.profileImageList.count)
+    let randomImageIndex = Int.random(in: 0..<ImageList.shared.profileImageList.count)
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
+    
     
     override func configureHierarchy() {
         addSubview(imageView)
@@ -29,6 +32,9 @@ class ProfileInitView: BaseView {
         addSubview(lineView)
         addSubview(infoLable)
         addSubview(okButton)
+        addSubview(mbtiLable)
+        
+        addSubview(collectionView)
         
     }
     
@@ -70,10 +76,25 @@ class ProfileInitView: BaseView {
             make.height.equalTo(15)
         }
         
+        
+        mbtiLable.snp.makeConstraints { make in
+            make.top.equalTo(infoLable.snp.bottom).offset(32)
+            make.leading.equalTo(self).offset(40)
+        }
+        
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(infoLable.snp.bottom).offset(20)
+            make.leading.equalTo(mbtiLable.snp.trailing).offset(30)
+            make.trailing.equalTo(self).inset(20)
+            make.height.equalTo(150)
+            
+        }
+        
+
         okButton.snp.makeConstraints { make in
-            make.top.equalTo(infoLable.snp.bottom).offset(16)
             make.horizontalEdges.equalTo(self).inset(16)
             make.height.equalTo(self.snp.width).multipliedBy(1.0 / 8.0)
+            make.bottom.equalTo(self.safeAreaLayoutGuide).inset(30)
             
         }
         
@@ -84,8 +105,7 @@ class ProfileInitView: BaseView {
     
     override func configureView() {
         
-        
-        //imageView.image = UIImage(named: ImageList.shared.profileImageList[randomImageIndex])
+        imageView.image = ImageList.shared.profileImageList[randomImageIndex]
         imageView.isUserInteractionEnabled = true // 뷰에도 터치 가능하게
         
         circleView.backgroundColor = ColorList.mainColor
@@ -93,11 +113,14 @@ class ProfileInitView: BaseView {
         subImageView.image = UIImage(systemName: "camera.fill")
         subImageView.tintColor = ColorList.white
         subImageView.contentMode = .scaleAspectFit
-    
-        lineView.backgroundColor = ColorList.white
+
+        
+        lineView.backgroundColor = ColorList.darkGray
        
         let text = "2글자 이상 10글자 미만으로 설정해주세요"
         infoLable.text = text
+        
+        mbtiLable.text = "MBTI"
         
         okButton.isEnabled = false
         
@@ -109,5 +132,35 @@ class ProfileInitView: BaseView {
     
         
     }
+    
+    private func createCollectionViewLayout() -> UICollectionViewLayout {
+        
+        
+        guard let window = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return UICollectionViewLayout() }
+        
+        let layout = UICollectionViewFlowLayout()
+        
+        let deviceWidth = window.screen.bounds.size.width
+        
+        let spacing: CGFloat = 8
+        let inset: CGFloat = 16
+        let imageCount: CGFloat = 4
+        
+        let objectWidth = (deviceWidth - ((spacing * (imageCount - 1)) + (inset * 2))) / 6.5
+        
 
+        layout.minimumInteritemSpacing = spacing
+        
+        layout.itemSize = CGSize(width: objectWidth, height: objectWidth)
+        layout.sectionInset = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
+        
+        
+        layout.scrollDirection = .vertical
+        
+        return layout
+    }
+    
+    deinit {
+        print("ProfileInitView Deinit")
+    }
 }

@@ -8,22 +8,46 @@
 import UIKit
 
 class ProfileInitViewController: UIViewController {
+    
+    
+    private var profileView = ProfileInitView()
+    private var profileModel = ProfileViewModel()
+    
+    override func loadView() {
+        view = profileView
+        
+        
+        profileView.collectionView.delegate = self
+        profileView.collectionView.dataSource = self
+        profileView.collectionView.register(ProfileInitCollectionViewCell.self, forCellWithReuseIdentifier: ProfileInitCollectionViewCell.id)
+        
+        navigationItem.title = profileModel.navigationTitle
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
     
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
+
+
+extension ProfileInitViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 7
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileInitCollectionViewCell.id, for: indexPath) as? ProfileInitCollectionViewCell else { return UICollectionViewCell() }
+        
+        
+        cell.setupCast(num: indexPath.item)
+        
+        return cell
+        
+        
+    }
+}
+    
