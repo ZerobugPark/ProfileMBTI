@@ -17,15 +17,21 @@ class ProfileViewModel {
     let navigationTitle = "PROFILE SETTING"
     
     
-    var currentIdx = 8
     
     var inputSelected: Observable<Int> = Observable((0))
     var inputText: Observable<String> = Observable((""))
     var inputTextField: Observable<String?> = Observable((nil))
+    var inputViewDidLoad: Observable<Void> = Observable(())
+    var inputSelectedImage: Observable<Int> = Observable((0))
+    var inputReset: Observable<Void> = Observable(())
     
     var outputChangeStauts:Observable<Void>  = Observable(())
     var outputTextStatus:Observable<(String, Bool)>  = Observable(("",false))
     var outputTextFieldStatus:Observable<(String, Bool)>  = Observable(("",false))
+    
+    var index = Int.random(in: 0..<ImageList.shared.profileImageList.count)
+    
+    var outputImageIndex: Observable<Int> = Observable((0))
     
     
     var mbtiStatus = [false, false, false, false, false, false, false, false]
@@ -50,6 +56,25 @@ class ProfileViewModel {
             print("inputTextField")
             self?.validationLength(str: str)
         }
+        
+        inputViewDidLoad.lazyBind { [weak self] _ in
+            print("inputViewDidLoad")
+            self?.outputImageIndex.value = self!.index
+        }
+        
+        inputSelectedImage.lazyBind { [weak self] index in
+            print("inputSelectedImage")
+            self?.index = index
+            self?.outputImageIndex.value = index
+            
+        }
+        
+        inputReset.lazyBind { [weak self] _ in
+            self?.mbtiStatus = [false, false, false, false, false, false, false, false]
+            self?.outputChangeStauts.value = ()
+        }
+            
+        
     }
     
     
@@ -70,7 +95,7 @@ class ProfileViewModel {
             mbtiStatus[index] = true
             mbtiStatus[index-4] = false
         }
-        currentIdx = index
+
         outputChangeStauts.value = ()
         print(mbtiStatus)
     }
