@@ -8,7 +8,7 @@
 import Foundation
 
 
-class Observable<T> {
+final class Observable<T> {
     
     var closure: ((T) -> ())?
     
@@ -29,7 +29,6 @@ class Observable<T> {
     }
     
     func lazyBind(_ closure: @escaping (T) -> ()) {
-        closure(value)
         self.closure = closure
     }
     
