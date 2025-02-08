@@ -14,7 +14,8 @@ class BaseView: UIView {
         configureHierarchy()
         configureLayout()
         configureView()
-        // 모든 뷰가 동일한 색상의 뷰를 가진다면, 베이스뷰에서 작업하는 것도 괜찮아 보임.
+        
+        backgroundColor = ColorList.white
        
     }
     

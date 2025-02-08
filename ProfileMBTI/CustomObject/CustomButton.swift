@@ -49,11 +49,11 @@ extension CustomButton.Configuration {
        
         var configuration = UIButton.Configuration.filled()
         configuration.title = title
-        configuration.baseForegroundColor = ColorList.mainColor  // 텍스트 컬러
-        configuration.baseBackgroundColor = .clear // 배경 컬러
+        configuration.baseForegroundColor = ColorList.white // 텍스트 컬러
+        configuration.baseBackgroundColor = ColorList.falseButton // 배경 컬러
         
-        configuration.background.strokeColor = ColorList.mainColor // 테두리 색상
-        configuration.background.strokeWidth =  3 // 테두리 굵기
+        //configuration.background.strokeColor = ColorList.mainColor // 테두리 색상
+        //configuration.background.strokeWidth =  3 // 테두리 굵기
         configuration.cornerStyle = .capsule
         configuration.buttonSize = .small
       
