@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-class ProfileInitView: BaseView {
+final class ProfileInitView: BaseView {
 
     private let circleView = UIView()
     private let subImageView = CustomImageView()

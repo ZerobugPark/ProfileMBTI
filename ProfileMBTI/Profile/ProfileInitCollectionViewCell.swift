@@ -12,7 +12,7 @@ final class ProfileInitCollectionViewCell: BaseCollectionViewCell {
     static let id = "ProfileInitCollectionViewCell"
     
     private let mbtiView = UIView()
-    private let lable = CustomLabel(boldStyle: false, fontSize: 14, color: ColorList.ligthGray)
+    private let lable = CustomLabel(boldStyle: false, fontSize: 14, color: ColorList.darkGray)
     
     
     
@@ -42,17 +42,23 @@ final class ProfileInitCollectionViewCell: BaseCollectionViewCell {
         mbtiView.backgroundColor = .clear
         mbtiView.layer.borderWidth = 1
         mbtiView.clipsToBounds = true
-        mbtiView.layer.borderColor = ColorList.ligthGray.cgColor
+        mbtiView.layer.borderColor = ColorList.darkGray.cgColor
         
         DispatchQueue.main.async {
             self.mbtiView.layer.cornerRadius = self.mbtiView.frame.width / 2
         }
     }
 
-    func setupCast(num: Int) {
+    func setup(tuple: (String, Bool)) {
         
-        lable.text = "\(num)"
+     
         
+        let color = tuple.1 ? ColorList.mainColor : ColorList.white
+        let textcolor = tuple.1 ? ColorList.white : ColorList.darkGray
+        
+        mbtiView.backgroundColor = color
+        lable.textColor = textcolor
+        lable.text = tuple.0
 
     }
     
