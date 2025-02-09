@@ -44,8 +44,8 @@ final class ProfileImageSettingViewController: UIViewController {
             self?.settingView.collectionView.reloadData()
         }
         settingModel.outputChageImage.lazyBind { [weak self] value  in
-            self?.settingView.collectionView.reloadItems(at: [IndexPath(row: value.1, section: 0)]) // 이전 이미지 흑백으로 변경
-            self?.settingView.collectionView.reloadItems(at: [IndexPath(row: value.0, section: 0)]) // 이전 이미지 흑백으로 변경
+            self?.settingView.collectionView.reloadItems(at: [IndexPath(row: value.1, section: 0)]) 
+            self?.settingView.collectionView.reloadItems(at: [IndexPath(row: value.0, section: 0)])
         }
     }
     

@@ -15,7 +15,8 @@ class ProfileViewModel {
     let mbtiList = ["E", "S", "T", "J", "I", "N", "F", "P"]
     
     let navigationTitle = "PROFILE SETTING"
-    
+    let empty = ""
+    let info = "2글자 이상 10글자 미만으로 설정해주세요"
     
     
     var inputSelected: Observable<Int> = Observable((0))
@@ -37,7 +38,7 @@ class ProfileViewModel {
     var mbtiStatus = [false, false, false, false, false, false, false, false]
     
     var isOk = true
-
+    
     
     init() {
         print("ProfileViewModel Init")
@@ -73,7 +74,7 @@ class ProfileViewModel {
             self?.mbtiStatus = [false, false, false, false, false, false, false, false]
             self?.outputChangeStauts.value = ()
         }
-            
+        
         
     }
     
@@ -95,7 +96,7 @@ class ProfileViewModel {
             mbtiStatus[index] = true
             mbtiStatus[index-4] = false
         }
-
+        
         outputChangeStauts.value = ()
         print(mbtiStatus)
     }
@@ -105,8 +106,8 @@ class ProfileViewModel {
         let specialCharacter = ["@","#","$","%"]
         
         var infoMsg = ""
-     
-     
+        
+        
         
         if specialCharacter.contains(str) {
             infoMsg = "닉네임에 @, #, $, % 는 포함할 수 없어요"
@@ -132,9 +133,15 @@ class ProfileViewModel {
         if isOk {
             if let text = str {
                 if text.count >= minLength && text.count <= maxLength {
-                    infoMsg = "사용할 수 있는 닉네님이에요"
-                    isOk = true
-                } else {
+                    if  mbtiStatus.filter({ $0 }).count < 4 {
+                        infoMsg = "MBTI를 설정해주세요."
+                        isOk = false
+                    } else {
+                        infoMsg = "사용할 수 있는 닉네님이에요"
+                        isOk = true
+                    }
+                    
+                } else  {
                     infoMsg = "2글자 이상 10글자 미만으로 설정해주세요"
                     isOk = false
                 }

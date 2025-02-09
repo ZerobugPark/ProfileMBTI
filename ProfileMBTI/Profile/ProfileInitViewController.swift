@@ -40,6 +40,8 @@ final class ProfileInitViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         profileModel.inputReset.value = ()
+        profileView.nameTextField.text = profileModel.empty
+        profileView.infoLable.text = profileModel.info
     }
     
     
@@ -47,7 +49,6 @@ final class ProfileInitViewController: UIViewController {
         profileModel.outputChangeStauts.lazyBind { [weak self] _ in
             print("outputMbtiStatus")
             self?.profileView.collectionView.reloadData()
-
         }
         profileModel.outputTextStatus.lazyBind { [weak self] (msg, stauts) in
             print("outputMbtiStatus")
@@ -93,6 +94,10 @@ final class ProfileInitViewController: UIViewController {
         
         navigationController?.pushViewController(vc, animated: true)
 
+    }
+    
+    deinit {
+        print("ProfileInitViewController Deinit")
     }
 
   
