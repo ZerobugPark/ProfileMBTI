@@ -21,7 +21,7 @@ final class ProfileInitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        profileModel.inputViewDidLoad.value = ()
+        profileModel.input.viewDidLoad.value = ()
         profileView.nameTextField.delegate = self
 
         profileView.collectionView.delegate = self
@@ -39,25 +39,25 @@ final class ProfileInitViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        profileModel.inputReset.value = ()
+        profileModel.input.reset.value = ()
         profileView.nameTextField.text = profileModel.empty
         profileView.infoLable.text = profileModel.info
     }
     
     
     private func bind() {
-        profileModel.outputChangeStauts.lazyBind { [weak self] _ in
+        profileModel.output.changeStauts.lazyBind { [weak self] _ in
             print("outputMbtiStatus")
             self?.profileView.collectionView.reloadData()
         }
-        profileModel.outputTextStatus.lazyBind { [weak self] (msg, stauts) in
+        profileModel.output.textStatus.lazyBind { [weak self] (msg, stauts) in
             print("outputMbtiStatus")
             self?.profileView.infoLable.text = msg
             self?.profileView.infoLable.textColor = stauts ? ColorList.trueButton :  ColorList.labelFalse
             
         }
         
-        profileModel.outputTextFieldStatus.lazyBind { [weak self] (msg, stauts) in
+        profileModel.output.textFieldStatus.lazyBind { [weak self] (msg, stauts) in
             print("outputTextFieldStatus")
             self?.profileView.infoLable.text = msg
             self?.profileView.infoLable.textColor = stauts ? ColorList.trueButton :  ColorList.labelFalse
@@ -67,7 +67,7 @@ final class ProfileInitViewController: UIViewController {
             self?.profileView.okButton.isEnabled = stauts
         }
         
-        profileModel.outputImageIndex.bind { [weak self] index in
+        profileModel.output.imageIndex.bind { [weak self] index in
             print("outputImageIndex")
             self?.profileView.imageView.image = ImageList.shared.profileImageList[index]
         }
@@ -86,11 +86,10 @@ final class ProfileInitViewController: UIViewController {
     @objc private func profileButtonTapped(_ sender: UIButton) {
         
         let vc = ProfileImageSettingViewController()
-        vc.settingModel.outputimageIndex.value = profileModel.outputImageIndex.value
+        vc.settingModel.output.imageIndex.value = profileModel.output.imageIndex.value
         vc.settingModel.changedImage =  { [weak self] num in
-            self?.profileModel.inputSelectedImage.value = num
+            self?.profileModel.input.selectedImage.value = num
         }
-        
         
         navigationController?.pushViewController(vc, animated: true)
 
@@ -128,18 +127,18 @@ extension ProfileInitViewController: UICollectionViewDelegate, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        profileModel.inputSelected.value = indexPath.item
+        profileModel.input.selected.value = indexPath.item
     }
 }
     
 extension ProfileInitViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        profileModel.inputTextField.value = textField.text
+        profileModel.input.textField.value = textField.text
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        profileModel.inputText.value = string
+        profileModel.input.text.value = string
         
         return profileModel.isOk
     }

@@ -9,81 +9,96 @@ import Foundation
 
 
 
-class ProfileViewModel {
-    
-    
+class ProfileViewModel: BaseViewModel {
+  
     let mbtiList = ["E", "S", "T", "J", "I", "N", "F", "P"]
     
     let navigationTitle = "PROFILE SETTING"
     let empty = ""
     let info = "2글자 이상 10글자 미만으로 설정해주세요"
+
+    private(set) var input: Input
+    private(set) var output: Output
+
+    struct Input {
+        
+        let selected: Observable<Int> = Observable((0))
+        let text: Observable<String> = Observable((""))
+        let textField: Observable<String?> = Observable((nil))
+        let viewDidLoad: Observable<Void> = Observable(())
+        let selectedImage: Observable<Int> = Observable((0))
+        let reset: Observable<Void> = Observable(())
+        
+    }
     
+    struct Output {
+        let changeStauts:Observable<Void>  = Observable(())
+        let textStatus:Observable<(String, Bool)>  = Observable(("",false))
+        let textFieldStatus:Observable<(String, Bool)>  = Observable(("",false))
+        let imageIndex: Observable<Int> = Observable((0))
+    }
     
-    var inputSelected: Observable<Int> = Observable((0))
-    var inputText: Observable<String> = Observable((""))
-    var inputTextField: Observable<String?> = Observable((nil))
-    var inputViewDidLoad: Observable<Void> = Observable(())
-    var inputSelectedImage: Observable<Int> = Observable((0))
-    var inputReset: Observable<Void> = Observable(())
-    
-    var outputChangeStauts:Observable<Void>  = Observable(())
-    var outputTextStatus:Observable<(String, Bool)>  = Observable(("",false))
-    var outputTextFieldStatus:Observable<(String, Bool)>  = Observable(("",false))
     
     var index = Int.random(in: 0..<ImageList.shared.profileImageList.count)
-    
-    var outputImageIndex: Observable<Int> = Observable((0))
-    
     
     var mbtiStatus = [false, false, false, false, false, false, false, false]
     
     var isOk = true
-    
+    var isButtonOk = false
+    var infoMsg = ""
     
     init() {
         print("ProfileViewModel Init")
+        input = Input()
+        output = Output()
+        transform()
         
-        inputSelected.lazyBind { [weak self] num in
+    }
+    
+    func transform() {
+    
+        input.selected.lazyBind { [weak self] num in
             print("inputSelected")
             self?.checkMbti(index: num)
         }
         
-        inputText.lazyBind { [weak self] str in
+        input.text.lazyBind { [weak self] str in
             print("inputText")
             self?.validation(str: str)
         }
-        
-        inputTextField.lazyBind { [weak self] str in
+        // 텍스트 필드에 대한 설정 처리
+        input.textField.lazyBind { [weak self] str in
             print("inputTextField")
             self?.validationLength(str: str)
         }
-        
-        inputViewDidLoad.lazyBind { [weak self] _ in
+        // 뷰가 최초 로드시 이미지 설정
+        input.viewDidLoad.lazyBind { [weak self] _ in
             print("inputViewDidLoad")
-            self?.outputImageIndex.value = self!.index
+            self?.output.imageIndex.value = self!.index
         }
         
-        inputSelectedImage.lazyBind { [weak self] index in
+        // 프로필 이미지 설정에서 설정한 이미지
+        input.selectedImage.lazyBind { [weak self] index in
             print("inputSelectedImage")
             self?.index = index
-            self?.outputImageIndex.value = index
+            self?.output.imageIndex.value = index
             
         }
         
-        inputReset.lazyBind { [weak self] _ in
+        // 뒤로가기 버튼 클릭시, 초기화
+        input.reset.lazyBind { [weak self] _ in
             self?.mbtiStatus = [false, false, false, false, false, false, false, false]
-            self?.outputChangeStauts.value = ()
+            self?.output.changeStauts.value = ()
+            self?.isButtonOk = false
         }
-        
-        
     }
-    
     
     private func checkMbti(index: Int) {
         
         if mbtiStatus[index] {
             mbtiStatus[index].toggle()
-            outputChangeStauts.value = ()
+            output.changeStauts.value = ()
+            buttonStatusCheck()
             return
         }
         
@@ -97,16 +112,32 @@ class ProfileViewModel {
             mbtiStatus[index-4] = false
         }
         
-        outputChangeStauts.value = ()
+        buttonStatusCheck()
+        output.changeStauts.value = ()
         print(mbtiStatus)
+    }
+    
+    private func buttonStatusCheck() {
+        if mbtiStatus.filter({ $0 }).count >= 4 {
+            if isOk {
+                isButtonOk = true
+                infoMsg = "사용할 수 있는 닉네님이에요"
+            } else {
+                isButtonOk = false
+                infoMsg = "2글자 이상 10글자 미만으로 설정해주세요"
+            }
+            
+        } else {
+            isButtonOk = false
+            infoMsg = "MBTI를 설정해주세요."
+        }
+        print(isButtonOk)
+        output.textFieldStatus.value = (infoMsg, isButtonOk)
     }
     
     private func validation(str: String) {
         
         let specialCharacter = ["@","#","$","%"]
-        
-        var infoMsg = ""
-        
         
         
         if specialCharacter.contains(str) {
@@ -119,7 +150,7 @@ class ProfileViewModel {
             isOk = true
         }
         
-        outputTextStatus.value = (infoMsg, isOk)
+        output.textStatus.value = (infoMsg, isOk)
         
     }
     
@@ -128,17 +159,17 @@ class ProfileViewModel {
         let maxLength = 10
         let minLength = 2
         
-        var infoMsg = ""
         
         if isOk {
             if let text = str {
                 if text.count >= minLength && text.count <= maxLength {
-                    if  mbtiStatus.filter({ $0 }).count < 4 {
-                        infoMsg = "MBTI를 설정해주세요."
-                        isOk = false
-                    } else {
+                    if  isButtonOk {
                         infoMsg = "사용할 수 있는 닉네님이에요"
                         isOk = true
+    
+                    } else {
+                        infoMsg = "MBTI를 설정해주세요."
+                        isOk = false
                     }
                     
                 } else  {
@@ -146,7 +177,7 @@ class ProfileViewModel {
                     isOk = false
                 }
             }
-            outputTextFieldStatus.value = (infoMsg, isOk)
+            output.textFieldStatus.value = (infoMsg, isOk)
         }
     }
     

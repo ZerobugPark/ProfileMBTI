@@ -39,7 +39,7 @@ final class ProfileImageSettingViewController: UIViewController {
             self?.navigationItem.title = self?.settingModel.navigationTitle
         }
         
-        settingModel.output.imageIndex.lazyBind { [weak self] _ in
+        settingModel.output.imageStatus.lazyBind { [weak self] _ in
             print("outputimageStatus")
             self?.settingView.collectionView.reloadData()
         }
@@ -69,7 +69,7 @@ extension ProfileImageSettingViewController: UICollectionViewDelegate, UICollect
         }
         
         let tuple =  settingModel.profileStatus[indexPath.item]
-        
+    
         cell.imageSetup(tuple: tuple)
         
         

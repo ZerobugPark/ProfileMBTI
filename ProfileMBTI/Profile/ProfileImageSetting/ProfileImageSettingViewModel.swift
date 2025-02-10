@@ -10,8 +10,8 @@ import Foundation
 
 final class ProfileImageSettingViewModel: BaseViewModel {
     
-    let input: Input
-    let output: Output
+    private(set) var input: Input
+    private(set) var output: Output
     
     struct Input {
         let viewDidLoad: Observable<Void> = Observable(())
@@ -43,7 +43,7 @@ final class ProfileImageSettingViewModel: BaseViewModel {
         output = Output()
         
 
-        
+        transform()
     }
     
     
@@ -76,6 +76,7 @@ final class ProfileImageSettingViewModel: BaseViewModel {
         if output.imageIndex.value != index {
             previousImageIndex = output.imageIndex.value
             output.imageIndex.value = index
+            print(previousImageIndex, output.imageIndex.value)
 
             profileStatus[previousImageIndex] = (previousImageIndex, false)
             profileStatus[output.imageIndex.value] = (output.imageIndex.value, true)
