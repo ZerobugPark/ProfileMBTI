@@ -17,7 +17,7 @@ final class ProfileImageSettingViewController: UIViewController {
     override func loadView() {
         view = settingView
         
-        settingModel.inputViewDidLoad.value = ()
+        settingModel.input.viewDidLoad.value = ()
     }
     
     
@@ -33,18 +33,18 @@ final class ProfileImageSettingViewController: UIViewController {
     }
     
     private func bind() {
-        settingModel.outputimageIndex.bind { [weak self] index in
+        settingModel.output.imageIndex.bind { [weak self] index in
             print("outputimageIndex")
             self?.settingView.imageView.image = ImageList.shared.profileImageList[index]
             self?.navigationItem.title = self?.settingModel.navigationTitle
         }
         
-        settingModel.outputimageStatus.lazyBind { [weak self] _ in
+        settingModel.output.imageIndex.lazyBind { [weak self] _ in
             print("outputimageStatus")
             self?.settingView.collectionView.reloadData()
         }
-        settingModel.outputChageImage.lazyBind { [weak self] value  in
-            self?.settingView.collectionView.reloadItems(at: [IndexPath(row: value.1, section: 0)]) 
+        settingModel.output.chageImage.lazyBind { [weak self] value  in
+            self?.settingView.collectionView.reloadItems(at: [IndexPath(row: value.1, section: 0)])
             self?.settingView.collectionView.reloadItems(at: [IndexPath(row: value.0, section: 0)])
         }
     }
@@ -79,7 +79,7 @@ extension ProfileImageSettingViewController: UICollectionViewDelegate, UICollect
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        settingModel.inputDidSelected.value = indexPath.item
+        settingModel.input.didSelected.value = indexPath.item
     }
     
     
