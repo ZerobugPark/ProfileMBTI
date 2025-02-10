@@ -10,16 +10,16 @@ import Foundation
 
 
 class ProfileViewModel: BaseViewModel {
-  
+    
     let mbtiList = ["E", "S", "T", "J", "I", "N", "F", "P"]
     
     let navigationTitle = "PROFILE SETTING"
     let empty = ""
     let info = "2글자 이상 10글자 미만으로 설정해주세요"
-
+    
     private(set) var input: Input
     private(set) var output: Output
-
+    
     struct Input {
         
         let selected: Observable<Int> = Observable((0))
@@ -43,9 +43,11 @@ class ProfileViewModel: BaseViewModel {
     
     var mbtiStatus = [false, false, false, false, false, false, false, false]
     
-    var isOk = true
+    var isOk = false
     var isButtonOk = false
+    var observal = false
     var infoMsg = ""
+    
     
     init() {
         print("ProfileViewModel Init")
@@ -56,7 +58,7 @@ class ProfileViewModel: BaseViewModel {
     }
     
     func transform() {
-    
+        
         input.selected.lazyBind { [weak self] num in
             print("inputSelected")
             self?.checkMbti(index: num)
@@ -119,20 +121,20 @@ class ProfileViewModel: BaseViewModel {
     
     private func buttonStatusCheck() {
         if mbtiStatus.filter({ $0 }).count >= 4 {
-            if isOk {
-                isButtonOk = true
-                infoMsg = "사용할 수 있는 닉네님이에요"
-            } else {
-                isButtonOk = false
-                infoMsg = "2글자 이상 10글자 미만으로 설정해주세요"
-            }
-            
+            isButtonOk = true
         } else {
             isButtonOk = false
-            infoMsg = "MBTI를 설정해주세요."
         }
-        print(isButtonOk)
-        output.textFieldStatus.value = (infoMsg, isButtonOk)
+        
+        if isButtonOk && isOk {
+            observal = true
+            infoMsg = "사용할 수 있는 닉네임입니다."
+        } else {
+            observal = false
+            infoMsg = isButtonOk ? "2글자 이상 10글자 미만으로 설정해주세요" : "MBTI를 설정해주세요."
+        }
+        
+        output.textFieldStatus.value = (infoMsg, observal)
     }
     
     private func validation(str: String) {
@@ -163,21 +165,19 @@ class ProfileViewModel: BaseViewModel {
         if isOk {
             if let text = str {
                 if text.count >= minLength && text.count <= maxLength {
-                    if  isButtonOk {
-                        infoMsg = "사용할 수 있는 닉네님이에요"
-                        isOk = true
-    
-                    } else {
-                        infoMsg = "MBTI를 설정해주세요."
-                        isOk = false
-                    }
-                    
+                    isOk = true
                 } else  {
-                    infoMsg = "2글자 이상 10글자 미만으로 설정해주세요"
                     isOk = false
                 }
             }
-            output.textFieldStatus.value = (infoMsg, isOk)
+            if isButtonOk && isOk {
+                infoMsg = "사용할 수 있는 닉네님이에요"
+                observal = true
+            } else {
+                infoMsg = isOk ? "MBTI를 설정해주세요." : "2글자 이상 10글자 미만으로 설정해주세요"
+                observal = false
+            }
+            output.textFieldStatus.value = (infoMsg, observal)
         }
     }
     
